@@ -14,13 +14,13 @@ a simple solution is that you could make a list of every server you own and then
 elalmirante proposes a query language, that when paired with a configuration schema (in yaml) aided by a tag system  
 can make for a very flexible system for selecting which servers to deploy, and what to exclude from the pool of servers you have configured.
 
-for example elalmirante gives you the flexibility to include or exclude servers based on a tag system.
+elalmirante gives you the flexibility to include or exclude servers based on a tag system.
 
 ## Simple example
 Imagine you have 5 servers, all running the same application but for 5 different clients:
 
-server1 -> client1
-server2 -> client2
+server1 -> client1  
+server2 -> client2  
 
 and so for, now server1, server2 and server3 are running on europe so you tag them with "europe", server 4 is running on america and server 5 on asia, so you tag them accordingly:
 
