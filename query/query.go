@@ -12,7 +12,8 @@ const (
 	negator   string = "!"
 )
 
-func Servers(source []config.Server, query string) []config.Server {
+// Exec runs the query on the specified source, returns matching servers
+func Exec(source []config.Server, query string) []config.Server {
 	commands := strings.Split(query, separator)
 
 	servers := make([]config.Server, 0)
@@ -32,20 +33,61 @@ func Servers(source []config.Server, query string) []config.Server {
 	}
 
 	// remove duplicates so we dont deploy multiple-times
-	servers = removeDuplicates(servers)
-	return servers
+	return removeDuplicates(servers)
 }
 
 func addWithTag(source, servers []config.Server, tag string) []config.Server {
 	result := make([]config.Server, 0)
+	result = append(result, servers...)
+
+	for _, s := range source {
+		if containsTag(s, tag) {
+			result = append(result, s)
+		}
+	}
 
 	return result
 }
 
 func removeWithTag(servers []config.Server, tag string) []config.Server {
-	return nil
+	result := make([]config.Server, 0)
+
+	for _, s := range servers {
+		if !containsTag(s, tag) {
+			result = append(result, s)
+		}
+	}
+
+	return result
 }
 
 func removeDuplicates(servers []config.Server) []config.Server {
-	return servers
+	result := make([]config.Server, 0)
+
+	for _, s := range servers {
+		if !alreadyIn(result, s) {
+			result = append(result, s)
+		}
+	}
+
+	return result
+}
+
+func containsTag(server config.Server, tag string) bool {
+	for _, t := range server.Tags {
+		if t == tag {
+			return true
+		}
+	}
+	return false
+}
+
+func alreadyIn(servers []config.Server, item config.Server) bool {
+	for _, s := range servers {
+		if item.Name == s.Name {
+			return true
+		}
+	}
+
+	return false
 }

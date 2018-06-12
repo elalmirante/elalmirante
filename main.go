@@ -9,7 +9,6 @@ import (
 
 func main() {
 	servers, _ := config.GetServersFromConfigFile("config.yml")
-	fmt.Println(servers)
-	deployable := query.Servers(servers, "*,!project1")
+	deployable := query.Exec(servers, "*,!project1")
 	fmt.Println(deployable)
 }
