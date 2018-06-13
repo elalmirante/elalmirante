@@ -16,61 +16,53 @@ const (
 func Exec(source []models.Server, query string) []models.Server {
 	commands := strings.Split(query, separator)
 
-	servers := make([]models.Server, 0)
+	servers := make(map[string]models.Server, 0)
 
 	for _, cmd := range commands {
 		// if command is special all, add all servers.
 		if cmd == all {
-			servers = append(servers, source...)
+			servers = addAll(servers, source)
 		} else if strings.HasPrefix(cmd, negator) {
 			// if its a negation remove from the current pool of servers
 			tag := cmd[1:]
 			servers = removeWithTag(servers, tag)
 		} else {
 			// if its a regular tag, add from configuration with matching tag
-			servers = addWithTag(source, servers, cmd)
+			servers = addWithTag(servers, source, cmd)
 		}
 	}
 
-	// remove duplicates so we dont deploy multiple-times
-	return removeDuplicates(servers)
+	return mapValues(servers)
 }
 
-func addWithTag(source, servers []models.Server, tag string) []models.Server {
-	result := make([]models.Server, 0)
-	result = append(result, servers...)
+type nameServerMap map[string]models.Server
 
+func addAll(servers nameServerMap, source []models.Server) nameServerMap {
 	for _, s := range source {
-		if containsTag(s, tag) {
-			result = append(result, s)
-		}
+		servers[s.Name] = s
 	}
 
-	return result
+	return servers
 }
 
-func removeWithTag(servers []models.Server, tag string) []models.Server {
-	result := make([]models.Server, 0)
-
-	for _, s := range servers {
-		if !containsTag(s, tag) {
-			result = append(result, s)
+func addWithTag(servers nameServerMap, source []models.Server, tag string) nameServerMap {
+	for _, server := range source {
+		if containsTag(server, tag) {
+			servers[server.Name] = server
 		}
 	}
 
-	return result
+	return servers
 }
 
-func removeDuplicates(servers []models.Server) []models.Server {
-	result := make([]models.Server, 0)
-
-	for _, s := range servers {
-		if !alreadyIn(result, s) {
-			result = append(result, s)
+func removeWithTag(servers nameServerMap, tag string) nameServerMap {
+	for name, server := range servers {
+		if containsTag(server, tag) {
+			delete(servers, name)
 		}
 	}
 
-	return result
+	return servers
 }
 
 func containsTag(server models.Server, tag string) bool {
@@ -82,12 +74,10 @@ func containsTag(server models.Server, tag string) bool {
 	return false
 }
 
-func alreadyIn(servers []models.Server, item models.Server) bool {
-	for _, s := range servers {
-		if item.Name == s.Name {
-			return true
-		}
+func mapValues(servers nameServerMap) []models.Server {
+	result := make([]models.Server, 0)
+	for _, v := range servers {
+		result = append(result, v)
 	}
-
-	return false
+	return result
 }

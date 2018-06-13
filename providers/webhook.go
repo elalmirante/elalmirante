@@ -6,9 +6,7 @@ import (
 	"github.com/elalmirante/elalmirante/models"
 )
 
-type Webhook struct {
-	KeyRegExp string
-}
+type Webhook struct{}
 
 func (w Webhook) Deploy(s models.Server) (string, error) {
 	return "", nil

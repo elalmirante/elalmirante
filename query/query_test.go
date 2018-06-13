@@ -2,6 +2,7 @@ package query_test
 
 import (
 	"reflect"
+	"sort"
 	"testing"
 
 	"github.com/elalmirante/elalmirante/models"
@@ -28,9 +29,7 @@ var source = []models.Server{
 
 func TestAsterisk(t *testing.T) {
 	result := query.Exec(source, "*")
-	if !reflect.DeepEqual(source, result) {
-		t.Errorf("\nExpected: %v\nGot: %v\n", source, result)
-	}
+	sortAndTest(t, source, result)
 }
 
 func TestRemove(t *testing.T) {
@@ -43,9 +42,7 @@ func TestRemove(t *testing.T) {
 	}
 
 	result := query.Exec(source, "*,!project2")
-	if !reflect.DeepEqual(result, expectation) {
-		t.Errorf("\nExpected: %v\nGot: %v\n", expectation, result)
-	}
+	sortAndTest(t, expectation, result)
 }
 
 func TestAdd(t *testing.T) {
@@ -63,9 +60,7 @@ func TestAdd(t *testing.T) {
 	}
 
 	result := query.Exec(source, "project2")
-	if !reflect.DeepEqual(result, expectation) {
-		t.Errorf("\nExpected: %v\nGot: %v\n", expectation, result)
-	}
+	sortAndTest(t, expectation, result)
 }
 
 func TestRemoveDuplicates(t *testing.T) {
@@ -78,7 +73,19 @@ func TestRemoveDuplicates(t *testing.T) {
 	}
 
 	result := query.Exec(source, "*,project1,!project2")
-	if !reflect.DeepEqual(result, expectation) {
+	sortAndTest(t, expectation, result)
+}
+
+func sortAndTest(t *testing.T, expectation, result []models.Server) {
+	sort.Slice(expectation, func(i, j int) bool {
+		return expectation[i].Name < expectation[j].Name
+	})
+
+	sort.Slice(result, func(i, j int) bool {
+		return result[i].Name < result[j].Name
+	})
+
+	if !reflect.DeepEqual(expectation, result) {
 		t.Errorf("\nExpected: %v\nGot: %v\n", expectation, result)
 	}
 }
