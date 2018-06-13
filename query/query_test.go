@@ -4,22 +4,22 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/elalmirante/elalmirante/config"
+	"github.com/elalmirante/elalmirante/models"
 	"github.com/elalmirante/elalmirante/query"
 )
 
-var source = []config.Server{
-	config.Server{
+var source = []models.Server{
+	models.Server{
 		Name: "server1",
 		Host: "host1",
 		Tags: []string{"server1", "project1"},
 	},
-	config.Server{
+	models.Server{
 		Name: "server2",
 		Host: "host2",
 		Tags: []string{"server2", "project2"},
 	},
-	config.Server{
+	models.Server{
 		Name: "server3",
 		Host: "host3",
 		Tags: []string{"server3", "project2"},
@@ -34,8 +34,8 @@ func TestAsterisk(t *testing.T) {
 }
 
 func TestRemove(t *testing.T) {
-	expectation := []config.Server{
-		config.Server{
+	expectation := []models.Server{
+		models.Server{
 			Name: "server1",
 			Host: "host1",
 			Tags: []string{"server1", "project1"},
@@ -49,13 +49,13 @@ func TestRemove(t *testing.T) {
 }
 
 func TestAdd(t *testing.T) {
-	expectation := []config.Server{
-		config.Server{
+	expectation := []models.Server{
+		models.Server{
 			Name: "server2",
 			Host: "host2",
 			Tags: []string{"server2", "project2"},
 		},
-		config.Server{
+		models.Server{
 			Name: "server3",
 			Host: "host3",
 			Tags: []string{"server3", "project2"},
@@ -69,8 +69,8 @@ func TestAdd(t *testing.T) {
 }
 
 func TestRemoveDuplicates(t *testing.T) {
-	expectation := []config.Server{
-		config.Server{
+	expectation := []models.Server{
+		models.Server{
 			Name: "server1",
 			Host: "host1",
 			Tags: []string{"server1", "project1"},

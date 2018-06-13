@@ -3,7 +3,7 @@ package query
 import (
 	"strings"
 
-	"github.com/elalmirante/elalmirante/config"
+	"github.com/elalmirante/elalmirante/models"
 )
 
 const (
@@ -13,10 +13,10 @@ const (
 )
 
 // Exec runs the query on the specified source, returns matching servers
-func Exec(source []config.Server, query string) []config.Server {
+func Exec(source []models.Server, query string) []models.Server {
 	commands := strings.Split(query, separator)
 
-	servers := make([]config.Server, 0)
+	servers := make([]models.Server, 0)
 
 	for _, cmd := range commands {
 		// if command is special all, add all servers.
@@ -36,8 +36,8 @@ func Exec(source []config.Server, query string) []config.Server {
 	return removeDuplicates(servers)
 }
 
-func addWithTag(source, servers []config.Server, tag string) []config.Server {
-	result := make([]config.Server, 0)
+func addWithTag(source, servers []models.Server, tag string) []models.Server {
+	result := make([]models.Server, 0)
 	result = append(result, servers...)
 
 	for _, s := range source {
@@ -49,8 +49,8 @@ func addWithTag(source, servers []config.Server, tag string) []config.Server {
 	return result
 }
 
-func removeWithTag(servers []config.Server, tag string) []config.Server {
-	result := make([]config.Server, 0)
+func removeWithTag(servers []models.Server, tag string) []models.Server {
+	result := make([]models.Server, 0)
 
 	for _, s := range servers {
 		if !containsTag(s, tag) {
@@ -61,8 +61,8 @@ func removeWithTag(servers []config.Server, tag string) []config.Server {
 	return result
 }
 
-func removeDuplicates(servers []config.Server) []config.Server {
-	result := make([]config.Server, 0)
+func removeDuplicates(servers []models.Server) []models.Server {
+	result := make([]models.Server, 0)
 
 	for _, s := range servers {
 		if !alreadyIn(result, s) {
@@ -73,7 +73,7 @@ func removeDuplicates(servers []config.Server) []config.Server {
 	return result
 }
 
-func containsTag(server config.Server, tag string) bool {
+func containsTag(server models.Server, tag string) bool {
 	for _, t := range server.Tags {
 		if t == tag {
 			return true
@@ -82,7 +82,7 @@ func containsTag(server config.Server, tag string) bool {
 	return false
 }
 
-func alreadyIn(servers []config.Server, item config.Server) bool {
+func alreadyIn(servers []models.Server, item models.Server) bool {
 	for _, s := range servers {
 		if item.Name == s.Name {
 			return true

@@ -3,21 +3,16 @@ package config
 import (
 	"io/ioutil"
 
+	"github.com/elalmirante/elalmirante/models"
 	"gopkg.in/yaml.v2"
 )
 
 type Config struct {
-	Servers map[string]Server `yaml:servers`
+	Servers  map[string]models.Server `yaml:"servers"`
+	Provider string                   `yaml:"provider"`
 }
 
-type Server struct {
-	Name string
-	Host string   `yaml:"host"`
-	Key  string   `yaml:"key"`
-	Tags []string `yaml:"tags"`
-}
-
-func GetServersFromConfigFile(path string) ([]Server, error) {
+func GetServersFromConfigFile(path string) ([]models.Server, error) {
 	file, err := ioutil.ReadFile(path)
 	if err != nil {
 		return nil, err
@@ -28,15 +23,20 @@ func GetServersFromConfigFile(path string) ([]Server, error) {
 		return nil, err
 	}
 
-	servers := make([]Server, 0)
+	servers := make([]models.Server, 0)
 
 	// add name as tag
 	for k, v := range config.Servers {
 		v.Tags = append(v.Tags, k)
 		v.Name = k
 
+		if v.Provider == "" {
+			v.Provider = config.Provider
+		}
+
 		servers = append(servers, v)
 	}
 
-	return servers, nil
+	err = validateConfiguration(servers)
+	return servers, err
 }

@@ -8,7 +8,12 @@ import (
 )
 
 func main() {
-	servers, _ := config.GetServersFromConfigFile("config.yml")
+	servers, err := config.GetServersFromConfigFile("config.yml")
+	if err != nil {
+		fmt.Printf("Error: %s\n", err.Error())
+		return // exit
+	}
+
 	deployable := query.Exec(servers, "*,!project1")
 	fmt.Println(deployable)
 }
