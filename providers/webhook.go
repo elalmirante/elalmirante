@@ -2,6 +2,7 @@ package providers
 
 import (
 	"net/url"
+	"strings"
 
 	"github.com/elalmirante/elalmirante/models"
 )
@@ -17,8 +18,24 @@ func (w Webhook) KeyFormat() string {
 }
 
 func (w Webhook) ValidKey(key string) bool {
-	_, err := url.Parse(key) //add schema for webhook
+	// parse url
+	// check for user info
+	// check for host info
+
+	url, err := url.Parse(key)
 	if err != nil {
+		return false
+	}
+
+	if url.User != nil {
+		_, hasPassword := url.User.Password()
+		if !hasPassword {
+			return false
+		}
+	}
+
+	// last case, checks for ":8080" hosts, apparently valid...
+	if url.Host == "" || url.Port() == "" || strings.HasPrefix(url.Host, ":") {
 		return false
 	}
 
