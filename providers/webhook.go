@@ -5,12 +5,13 @@ import (
 	"strings"
 
 	"github.com/elalmirante/elalmirante/models"
+	"github.com/pkg/errors"
 )
 
 type Webhook struct{}
 
 func (w Webhook) Deploy(s models.Server) (string, error) {
-	return "", nil
+	return "", errors.New("not implemented!")
 }
 
 func (w Webhook) KeyFormat() string {

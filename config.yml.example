@@ -1,18 +1,16 @@
 provider: webhook
 servers:
   server1:
-    host: host1
     key: "user:password@host:port"
     tags:
       - project1
 
   server2:
-    host: host2
-    provider: agent
-    key: key2   
+    provider: kubernetes
+    key: kubekey 
     tags:
       - project2
 
   server3:
-    host: host3
-    key: "user3:password3@host3:port3"
+    provider: agent
+    key: agentkey
