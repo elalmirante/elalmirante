@@ -79,34 +79,26 @@ func deploy(servers []models.Server, cmdQuery, ref string) {
 	fmt.Printf("Deploying servers: query=%s ref=%s\n", cmdQuery, ref)
 	matches := query.Exec(servers, cmdQuery)
 
-	failed := make(chan error)
-	wg := sync.WaitGroup{}
-	wg.Add(len(matches))
-
-	// foreach server: deploy on a different go-routine
+	var wg sync.WaitGroup
 	for _, s := range matches {
-		go func(wg *sync.WaitGroup, s models.Server, c chan error) {
+		wg.Add(1)
+
+		go func(s models.Server) {
 			defer wg.Done()
 
-			// fmt.Println("Deploying server", s.Name, "...")
+			fmt.Printf("%s: deploying...\n", s.Name)
 			provider := providers.GetProvider(s.Provider)
 			_, err := provider.Deploy(s)
 
 			if err != nil {
-				c <- errors.Wrap(err, fmt.Sprintf("ERROR on %s", s.Name))
+				fmt.Println(errors.Wrap(err, fmt.Sprintf("%s: ERROR", s.Name)).Error())
+			} else {
+				fmt.Printf("%s: success\n", s.Name)
 			}
-		}(&wg, s, failed)
+		}(s)
 	}
 
-	// Print errors
-	go func(c chan error) {
-		for msg := range c {
-			fmt.Println(msg)
-		}
-	}(failed)
-
 	wg.Wait()
-	fmt.Println("Deploy done!")
 }
 
 func showUsage() {

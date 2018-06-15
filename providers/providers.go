@@ -4,6 +4,8 @@ import "github.com/elalmirante/elalmirante/models"
 
 var ValidProviders = []string{"webhook"}
 
+var webHookSingleton = Webhook{}
+
 type Provider interface {
 	Deploy(models.Server) (string, error)
 	KeyFormat() string
@@ -13,7 +15,7 @@ type Provider interface {
 func GetProvider(t string) Provider {
 	switch t {
 	case "webhook":
-		return Webhook{}
+		return webHookSingleton
 	default:
 		panic("Provider not found!")
 	}
