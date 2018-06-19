@@ -1,13 +1,22 @@
 package providers
 
-import "github.com/elalmirante/elalmirante/models"
+import (
+	"net/http"
+	"time"
+
+	"github.com/elalmirante/elalmirante/models"
+)
 
 var ValidProviders = []string{"webhook"}
 
-var webHookSingleton = Webhook{}
+var webHookSingleton = Webhook{
+	client: &http.Client{
+		Timeout: 5 * time.Minute,
+	},
+}
 
 type Provider interface {
-	Deploy(models.Server) (string, error)
+	Deploy(models.Server, string) (string, error)
 	KeyFormat() string
 	ValidKey(string) bool
 }
