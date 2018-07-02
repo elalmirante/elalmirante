@@ -91,6 +91,7 @@ func deploy(servers []models.Server, cmdQuery, ref string) {
 
 			if err != nil {
 				fmt.Println(errors.Wrap(err, fmt.Sprintf("%s: ERROR", s.Name)).Error())
+				// fmt.Printf("Output: %s\n", res)
 			}
 		}(s)
 	}
