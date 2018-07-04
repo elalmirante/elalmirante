@@ -1,7 +1,7 @@
-provider: webhook
+provider: agent
 servers:
   server1:
-    key: "user:password@host:port"
+    key: "http://user:password@host:port"
     tags:
       - project1
 
@@ -12,5 +12,5 @@ servers:
       - project2
 
   server3:
-    provider: agent
-    key: agentkey
+    provider: webhook
+    key: "http://user:password@host:port"
