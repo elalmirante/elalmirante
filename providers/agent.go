@@ -18,6 +18,10 @@ func (a Agent) Deploy(s models.Server, ref string) (string, error) {
 	url := s.Key + fmt.Sprintf("/deploy?ref=%s", ref)
 	res, err := a.client.Post(url, "application/x-www-form-urlencoded", nil)
 
+	if err != nil && res == nil {
+		return "", err
+	}
+
 	response, err := ioutil.ReadAll(res.Body)
 	defer res.Body.Close()
 

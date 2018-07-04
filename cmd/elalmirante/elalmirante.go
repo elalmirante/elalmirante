@@ -87,11 +87,11 @@ func deploy(servers []models.Server, cmdQuery, ref string) {
 			defer wg.Done()
 
 			provider := providers.GetProvider(s.Provider)
-			_, err := provider.Deploy(s, ref)
+			out, err := provider.Deploy(s, ref)
 
 			if err != nil {
 				fmt.Println(errors.Wrap(err, fmt.Sprintf("%s: ERROR", s.Name)).Error())
-				// fmt.Printf("Output: %s\n", res)
+				fmt.Printf("Output: %s\n", out)
 			}
 		}(s)
 	}
