@@ -10,6 +10,7 @@ const (
 	all       string = "*"
 	separator string = ","
 	negator   string = "!"
+	and       string = "+"
 )
 
 // Exec runs the query on the specified source, returns matching servers
@@ -24,11 +25,12 @@ func Exec(source []models.Server, query string) []models.Server {
 			servers = addAll(servers, source)
 		} else if strings.HasPrefix(cmd, negator) {
 			// if its a negation remove from the current pool of servers
-			tag := cmd[1:]
-			servers = removeWithTag(servers, tag)
+			tags := strings.Split(cmd[1:], and)
+			servers = removeWithTag(servers, tags)
 		} else {
 			// if its a regular tag, add from configuration with matching tag
-			servers = addWithTag(servers, source, cmd)
+			tags := strings.Split(cmd, and)
+			servers = addWithTag(servers, source, tags)
 		}
 	}
 
@@ -45,9 +47,9 @@ func addAll(servers nameServerMap, source []models.Server) nameServerMap {
 	return servers
 }
 
-func addWithTag(servers nameServerMap, source []models.Server, tag string) nameServerMap {
+func addWithTag(servers nameServerMap, source []models.Server, tag []string) nameServerMap {
 	for _, server := range source {
-		if containsTag(server, tag) {
+		if containsTags(server, tag) {
 			servers[server.Name] = server
 		}
 	}
@@ -55,9 +57,10 @@ func addWithTag(servers nameServerMap, source []models.Server, tag string) nameS
 	return servers
 }
 
-func removeWithTag(servers nameServerMap, tag string) nameServerMap {
+func removeWithTag(servers nameServerMap, tag []string) nameServerMap {
+
 	for name, server := range servers {
-		if containsTag(server, tag) {
+		if containsTags(server, tag) {
 			delete(servers, name)
 		}
 	}
@@ -65,12 +68,27 @@ func removeWithTag(servers nameServerMap, tag string) nameServerMap {
 	return servers
 }
 
-func containsTag(server models.Server, tag string) bool {
-	for _, t := range server.Tags {
-		if t == tag {
+func containsTags(server models.Server, tags []string) bool {
+
+	dict := make(map[string]bool)
+	for _, tag := range tags {
+		dict[tag] = false
+	}
+
+	for _, tag := range server.Tags {
+		dict[tag] = true
+	}
+
+	return !containsValue(dict, false)
+}
+
+func containsValue(dict map[string]bool, value bool) bool {
+	for _, v := range dict {
+		if v == value {
 			return true
 		}
 	}
+
 	return false
 }
 

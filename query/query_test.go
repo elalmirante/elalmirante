@@ -15,6 +15,10 @@ var source = []models.Server{
 		Tags: []string{"server1", "project1"},
 	},
 	models.Server{
+		Name: "server1-2",
+		Tags: []string{"server1", "project2"},
+	},
+	models.Server{
 		Name: "server2",
 		Tags: []string{"server2", "project2"},
 	},
@@ -44,6 +48,10 @@ func TestRemove(t *testing.T) {
 func TestAdd(t *testing.T) {
 	expectation := []models.Server{
 		models.Server{
+			Name: "server1-2",
+			Tags: []string{"server1", "project2"},
+		},
+		models.Server{
 			Name: "server2",
 			Tags: []string{"server2", "project2"},
 		},
@@ -66,6 +74,38 @@ func TestRemoveDuplicates(t *testing.T) {
 	}
 
 	result := query.Exec(source, "*,project1,!project2")
+	sortAndTest(t, expectation, result)
+}
+
+func TestAndAdd(t *testing.T) {
+	expectation := []models.Server{
+		models.Server{
+			Name: "server1-2",
+			Tags: []string{"server1", "project2"},
+		},
+	}
+
+	result := query.Exec(source, "project2+server1")
+	sortAndTest(t, expectation, result)
+}
+
+func TestAndRemove(t *testing.T) {
+	expectation := []models.Server{
+		{
+			Name: "server1",
+			Tags: []string{"server1", "project1"},
+		},
+		models.Server{
+			Name: "server2",
+			Tags: []string{"server2", "project2"},
+		},
+		models.Server{
+			Name: "server3",
+			Tags: []string{"server3", "project2"},
+		},
+	}
+
+	result := query.Exec(source, "*,!project2+server1")
 	sortAndTest(t, expectation, result)
 }
 
