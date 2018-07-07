@@ -9,7 +9,7 @@ import (
 	"github.com/elalmirante/elalmirante/providers"
 )
 
-var invalidTagChars = []string{"!", "*", ","}
+var invalidTagChars = []string{"!", "*", ",", "+"}
 
 func validateConfiguration(servers []models.Server) error {
 
