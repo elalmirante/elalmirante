@@ -29,7 +29,7 @@ var source = []models.Server{
 }
 
 func TestAsterisk(t *testing.T) {
-	result := query.Exec(source, "*")
+	result := query.ExecSorted(source, "*")
 	sortAndTest(t, source, result)
 }
 
@@ -41,7 +41,7 @@ func TestRemove(t *testing.T) {
 		},
 	}
 
-	result := query.Exec(source, "*,!project2")
+	result := query.ExecSorted(source, "*,!project2")
 	sortAndTest(t, expectation, result)
 }
 
@@ -61,7 +61,7 @@ func TestAdd(t *testing.T) {
 		},
 	}
 
-	result := query.Exec(source, "project2")
+	result := query.ExecSorted(source, "project2")
 	sortAndTest(t, expectation, result)
 }
 
@@ -73,7 +73,7 @@ func TestRemoveDuplicates(t *testing.T) {
 		},
 	}
 
-	result := query.Exec(source, "*,project1,!project2")
+	result := query.ExecSorted(source, "*,project1,!project2")
 	sortAndTest(t, expectation, result)
 }
 
@@ -85,7 +85,7 @@ func TestAndAdd(t *testing.T) {
 		},
 	}
 
-	result := query.Exec(source, "project2+server1")
+	result := query.ExecSorted(source, "project2+server1")
 	sortAndTest(t, expectation, result)
 }
 
@@ -105,17 +105,13 @@ func TestAndRemove(t *testing.T) {
 		},
 	}
 
-	result := query.Exec(source, "*,!project2+server1")
+	result := query.ExecSorted(source, "*,!project2+server1")
 	sortAndTest(t, expectation, result)
 }
 
 func sortAndTest(t *testing.T, expectation, result []models.Server) {
 	sort.Slice(expectation, func(i, j int) bool {
 		return expectation[i].Name < expectation[j].Name
-	})
-
-	sort.Slice(result, func(i, j int) bool {
-		return result[i].Name < result[j].Name
 	})
 
 	if !reflect.DeepEqual(expectation, result) {

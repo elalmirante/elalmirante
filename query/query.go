@@ -1,6 +1,7 @@
 package query
 
 import (
+	"sort"
 	"strings"
 
 	"github.com/elalmirante/elalmirante/models"
@@ -35,6 +36,18 @@ func Exec(source []models.Server, query string) []models.Server {
 	}
 
 	return mapValues(servers)
+}
+
+// ExecSorted returns the query, but the result is sorted by name (this is a bit slower and is therefore not the default)
+func ExecSorted(source []models.Server, query string) []models.Server {
+	servers := Exec(source, query)
+
+	// in place sort
+	sort.Slice(servers, func(i, j int) bool {
+		return servers[i].Name < servers[j].Name
+	})
+
+	return servers
 }
 
 type nameServerMap map[string]models.Server
