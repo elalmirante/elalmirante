@@ -7,7 +7,7 @@ import (
 	"github.com/elalmirante/elalmirante/models"
 )
 
-var ValidProviders = []string{"webhook", "agent"}
+var ValidProviders = []string{"webhook", "agent-http"}
 
 var webHookSingleton = Webhook{
 	client: &http.Client{
@@ -15,7 +15,7 @@ var webHookSingleton = Webhook{
 	},
 }
 
-var agentSingleton = Agent{
+var agentHttpSingleton = AgentHttp{
 	client: &http.Client{
 		Timeout: 5 * time.Minute,
 	},
@@ -29,8 +29,8 @@ type Provider interface {
 
 func GetProvider(t string) Provider {
 	switch t {
-	case "agent":
-		return agentSingleton
+	case "agent-http":
+		return agentHttpSingleton
 	case "webhook":
 		return webHookSingleton
 	default:

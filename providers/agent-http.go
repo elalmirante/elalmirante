@@ -10,11 +10,11 @@ import (
 	"github.com/elalmirante/elalmirante/models"
 )
 
-type Agent struct {
+type AgentHttp struct {
 	client *http.Client
 }
 
-func (a Agent) Deploy(s models.Server, ref string) (string, error) {
+func (a AgentHttp) Deploy(s models.Server, ref string) (string, error) {
 	url := s.Key + fmt.Sprintf("/deploy?ref=%s", ref)
 	res, err := a.client.Post(url, "application/x-www-form-urlencoded", nil)
 
@@ -38,11 +38,11 @@ func (a Agent) Deploy(s models.Server, ref string) (string, error) {
 	return strRes, err
 }
 
-func (a Agent) KeyFormat() string {
+func (a AgentHttp) KeyFormat() string {
 	return "http://<user>:<password>@<host>:<port>"
 }
 
-func (a Agent) ValidKey(key string) bool {
+func (a AgentHttp) ValidKey(key string) bool {
 	// parse url
 	// check for user info
 	// check for host info
