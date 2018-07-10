@@ -7,7 +7,7 @@ import (
 	"github.com/elalmirante/elalmirante/models"
 )
 
-var ValidProviders = []string{"webhook", "agent-http"}
+var ValidProviders = []string{"agent", "agent-http", "webhook"}
 
 var webHookSingleton = Webhook{
 	client: &http.Client{
@@ -21,6 +21,8 @@ var agentHttpSingleton = AgentHttp{
 	},
 }
 
+var agentSingleton = Agent{}
+
 type Provider interface {
 	Deploy(models.Server, string) (string, error)
 	KeyFormat() string
@@ -29,6 +31,8 @@ type Provider interface {
 
 func GetProvider(t string) Provider {
 	switch t {
+	case "agent":
+		return agentSingleton
 	case "agent-http":
 		return agentHttpSingleton
 	case "webhook":
